@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+</head>
+
+<body class="font-sans bg-[#0C101C] text-gray-300 flex flex-col h-screen">
+    <%- include('./Parts/Header/index.ejs') %>
+
+    <div class="flex-1 flex overflow-hidden">
+        <%- include('./Parts/Sidebar/index.ejs') %>
+
+        <main class="flex-1 p-4 md:p-8 bg-[#0C101C] overflow-y-auto rounded-tl-lg">
+            <div class="bg-[#0C101C] p-4 md:p-8 rounded-md shadow-md space-y-4 border border-[#171F35]">
+                <h2 class="text-xl md:text-3xl font-bold text-white mb-4">Welcome Back <%= username %></h2>
+            
+                <div class="space-y-4">
+                    <div class="relative p-4 bg-[#171B27] rounded-md shadow-md border border-[#171F35]">
+                        <h3 class="text-lg font-bold text-white mb-2 flex items-center justify-between">
+                            <span>File Count</span>
+                            <i class="fas fa-file text-2xl text-white"></i>
+                        </h3>
+                        <p class="text-white">Total Files: <span id="fileCount" class="text-white">Loading...</span></p>
+                    </div>
+            
+                    <div class="relative p-4 bg-[#171B27] rounded-md shadow-md border border-[#171F35]">
+                        <h3 class="text-lg font-bold text-white mb-2 flex items-center justify-between">
+                            <span>Space Used</span>
+                            <i class="fas fa-hdd text-2xl text-white"></i>
+                        </h3>
+                        <p class="text-white">Total Space: <span id="spaceUsed" class="text-white">Loading...</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                fetch('/api/file-count')
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById('fileCount').innerText = data.numberOfFiles;
+                    })
+                    .catch(error => console.error('Error Fetching File Count:', error));
+
+                fetch('/api/space-used')
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById('spaceUsed').innerText = data.spaceUsedFormatted;
+                    })
+                    .catch(error => console.error('Error Fetching Space Used:', error));
+            </script>
+        </main>
+    </div>
+</body>
+
+</html>
