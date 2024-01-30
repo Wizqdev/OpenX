@@ -1,0 +1,39 @@
+<header class="bg-[#0C101C] p-4 border-b border-[#171F35]">
+    <div class="container mx-auto flex items-center justify-between">
+        <a href="/">
+            <h1 class="text-3xl font-extrabold text-white">OpenX</h1>
+        </a>
+        <div class="relative" id="userDropdownContainer">
+            <span class="text-xl text-white font-bold cursor-pointer transition-all duration-300 ease-in-out transform hover:scale-110" id="userDropdown">  </span>
+            <div class="absolute hidden mt-2 w-36 right-0 bg-[#181C28] text-white border-[#171F35] border rounded-md py-2" id="userDropdownBox">
+                <div class="border-b border-[#171F35] text-center text-gray-500 mb-2">
+                    <p></p>
+                </div>
+                <a href="/dashboard/manage" class="block px-4 py-2 text-white hover:bg-[#171F35] hover:text-white border-b border-[#171F35] transition duration-300 ease-in-out">
+                    <span class="mr-2">&#x1F4BB;</span> Manage
+                </a>
+                <a href="/logout" class="block px-4 py-2 text-white hover:bg-[#171F35] hover:text-white transition duration-300 ease-in-out">
+                    <span class="mr-2">&#x1F6AA;</span> Logout
+                </a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<script>
+    var dropdownContainer = document.getElementById('userDropdownContainer');
+    var dropdown = document.getElementById('userDropdownBox');
+
+    dropdownContainer.addEventListener('click', function (event) {
+        dropdown.classList.toggle('hidden');
+        event.stopPropagation();
+    });
+
+    document.addEventListener('click', function () {
+        dropdown.classList.add('hidden');
+    });
+
+    dropdown.addEventListener('click', function (event) {
+        event.stopPropagation();
+    });
+</script> 

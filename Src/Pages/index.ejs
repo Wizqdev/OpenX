@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <title>OpenX</title>
+    <style>
+        body {
+            font-family: 'Courier New', Courier, monospace;
+        }
+    </style>
+</head>
+
+<body class="font-mono bg-black text-white flex flex-col h-screen">
+    <header class="bg-gray-900 p-4 flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-extrabold text-white">OpenX</h1>
+        </div>
+        <div class="flex items-center space-x-4">
+            <a href="https://github.com/Wizqdev/OpenX" class="text-white flex items-center hover:text-white">
+                <i class="fab fa-github mr-2"></i>
+                <span>Github</span>
+            </a>
+            <div class="border-l-2 border-white bg-gray-800 px-2 py-1 rounded">
+                <% if (loggedIn) { %>
+                    <a href="/dashboard" class="text-white flex items-center hover:text-white">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span class="ml-2">Dashboard</span>
+                    </a>
+                <% } else { %>
+                    <a href="/login" class="text-white flex items-center hover:text-white">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <span class="ml-2">Login</span>
+                    </a>
+                <% } %>
+            </div>
+        </div>        
+    </header>
+
+    <main class="flex-1 p-8 bg-[#011319] flex items-center justify-center">
+        <div class="text-center">
+            <h2 class="text-4xl font-extrabold mb-4 text-white">
+                <span class="hover:scale-110 transition-transform duration-300">
+                    The Next Generation
+                </span>
+            </h2>
+            <h1 class="text-3xl font-extrabold mb-4 text-white">ShareX / File Upload Server</h1>
+        </div>
+    </main>
+</body>
+
+</html>

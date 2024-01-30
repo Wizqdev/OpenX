@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Courier New', Courier, monospace;
+        }
+        .loading {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-r from-black via-gray-900 to-black text-white min-h-screen flex flex-col">
+    <header class="flex justify-between p-4">
+        <a href="/"><h1 class="text-3xl font-extrabold text-green-500">OpenX</h1></a>
+    </header>
+
+    <div class="flex-1 flex items-center justify-center">
+        <div class="bg-gray-800 p-8 rounded-md shadow-md w-96">
+            <h2 class="text-2xl font-extrabold mb-4 text-green-500">Login</h2>
+            <div id="errorMessage" class="text-red-600 mb-4 hidden" aria-live="assertive"></div>
+            <form id="loginForm" class="space-y-4">
+                <div class="flex flex-col">
+                    <label for="username" class="text-green-500">Username:</label>
+                    <input type="text" id="username" name="username" class="py-2 px-3 rounded-md bg-black text-white focus:outline-none focus:ring focus:border-blue-500 mt-1">
+                </div>
+                <div class="flex flex-col">
+                    <label for="password" class="text-green-500">Password:</label>
+                    <input type="password" id="password" name="password" class="py-2 px-3 rounded-md bg-black text-white focus:outline-none focus:ring focus:border-blue-500 mt-1">
+                </div>
+                <button type="button" onclick="submitForm()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out transform hover:scale-105">
+                    <span id="submitText">Login</span>
+                    <span id="loadingSpinner" class="hidden ml-2 animate-spin">&#9696;</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        async function submitForm() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('errorMessage');
+            const submitButton = document.getElementById('submitText');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+    
+            try {
+                submitButton.classList.add('hidden');
+                loadingSpinner.classList.remove('hidden');
+    
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, password }),
+                });
+    
+                const data = await response.json();
+    
+                if (data.success) {
+                    window.location.href = data.redirect;
+                } else {
+                    errorMessage.textContent = data.message || 'An error occurred.';
+                    errorMessage.classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                errorMessage.textContent = 'An error occurred.';
+                errorMessage.classList.remove('hidden');
+            } finally {
+                submitButton.classList.remove('hidden');
+                loadingSpinner.classList.add('hidden');
+            }
+        }
+    
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') {
+                submitForm();
+            }
+        });
+    </script>
+</body>
+
+</html>

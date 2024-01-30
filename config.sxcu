@@ -1,0 +1,16 @@
+{
+  "Name": "OpenX",
+  "DestinationType": "ImageUploader, TextUploader, FileUploader",
+  "RequestType": "POST",
+  "RequestURL": "https://yourdomain.com/api/upload",
+  "FileFormName": "file",
+  "Headers": {
+    "Authorization": "YourSecretKey"
+  },
+  "Body": "Form",
+  "Arguments": {
+    "file": "%input"
+  },
+  "URL": "$json:filePath$",
+  "ResponseType": "Text"
+}

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <title>OpenX Dashboard</title>
+</head>
+
+<body class="font-sans bg-[#0C101C] text-gray-300 flex flex-col h-screen">
+    <%- include('../Parts/Header/index.ejs') %>
+
+    <div class="flex-1 flex overflow-hidden">
+        <%- include('../Parts/Sidebar/index.ejs') %>
+
+        <main class="flex-1 p-8 bg-[#05070F] overflow-y-auto rounded-tl-lg">
+            <div class="bg-[#0C101C] rounded p-4 mb-6">
+                <h2 class="bottom-2">Api Keys</h2>
+                <% apiTokens.forEach(token => { %>
+                    <div class="flex justify-between items-center mb-2 bg-[#171B27] " id="token-<%= token %>">
+                        <p><%= token %></p>
+                        <button onclick="deleteApiToken('<%= token %>')"  class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded-xl transition duration-300 ease-in-out transform hover:scale-105">Delete</button>
+                    </div>
+                <% }); %>
+            </div>
+        </main>
+
+        <script>
+            async function deleteApiToken(token) {
+                try {
+                    const response = await fetch(`/api/token/delete/${encodeURIComponent(token)}`, {
+                        method: 'DELETE',
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        console.log(`Token ${token} deleted successfully`);
+                        document.getElementById(`token-${token}`).remove();
+                    } else {
+                        console.error(`Error deleting token ${token}:`, data.message);
+                    }
+                } catch (error) {
+                    console.error(`Error deleting token ${token}:`, error);
+                }
+            }
+        </script>
+    </div>
+</body>
+
+</html>

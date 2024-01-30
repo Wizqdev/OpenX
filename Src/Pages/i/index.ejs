@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:image" content="/raw/i/<%= filename %>">
+    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:secure_url" content="/raw/i/<%= filename %>">
+    <meta property="og:title" content="<%= embedInfo.title %>">
+    <meta property="og:description" content="<%= embedInfo.description %>">
+    <meta name="theme-color" content="<%= embedInfo.color %>" />
+    <meta property="" content="<%= embedInfo.description %>">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="twitter:card" content="summary_large_image">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gradient-to-r from-black via-gray-900 to-black text-white min-h-screen flex items-center justify-center">
+    <div class="max-w-2xl mx-auto bg-transparent p-8 rounded-md shadow-md flex flex-col items-center">
+        <% if (fileType === "image") { %>
+        <img src="/raw/i/<%= filename %>"
+            alt="<%= filename %>"
+            class="w-full h-auto max-h-96 object-cover cursor-pointer rounded-md shadow-md hover:shadow-lg" />
+        <% } else if (fileType === "video") { %>
+        <div class="relative">
+            <video controls autoplay class="w-full max-h-96 cursor-pointer rounded-md shadow-md hover:shadow-lg">
+                <source src="/raw/i/<%= filename %>" type="video/mp4" />
+                Your Browser Does Not Support The Video Tag.
+            </video>
+        </div>
+        <% } else { %>
+        <p class="text-center text-gray-400 text-lg">Others</p>
+        <% } %>
+
+        <div class="flex justify-center mt-8 space-x-4">
+            <a href="/raw/i/<%= filename %>"
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out transform hover:scale-105">View Raw</a>
+            <a href="/raw/i/<%= filename %>" download="<%= filename %>"
+                class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out transform hover:scale-105">Download</a>
+            <% if (loggedIn) { %>
+                <button 
+                    id="deleteButton"
+                    class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out transform hover:scale-105">
+                    Delete
+                </button>
+            <% } %>
+        </div>
+
+        <div class="mt-8 flex justify-between w-full"> 
+            <div class="text-gray-400 mr-8">
+                <% if (uploadInfo) { %>
+                Uploaded On
+                <span class="text-yellow-300 font-bold">
+                    <%= new Date(uploadInfo.uploadDateTime).toLocaleString() %>
+                </span>
+                <% } %>
+            </div>
+            <div class="text-gray-400">
+                Viewed By
+                <span class="text-yellow-300 font-bold" id="viewCount"></span>
+            </div>
+        </div>
+
+        <script>
+            // Fetch embed information from the API
+            fetch('/api/embed/edit')
+                .then(response => response.json())
+                .then(data => {
+                    const titleElement = document.querySelector('meta[property="og:title"]');
+                    const descriptionElement = document.querySelector('meta[property="og:description"]');
+                    if (titleElement) {
+                        titleElement.content = data.title;
+                    }
+                    if (descriptionElement) {
+                        descriptionElement.content = data.description;
+                    }
+                })
+                .catch(error => console.error('Error fetching embed information:', error));
+
+            // Fetch view count from the API
+            fetch('/api/viewcount/<%= filename %>')
+                .then(response => response.json())
+                .then(data => {
+                    const viewCountElement = document.getElementById('viewCount');
+                    if (viewCountElement) {
+                        viewCountElement.textContent = data.viewCount || '0';
+                    }
+                })
+                .catch(error => console.error('Error fetching view count:', error));
+
+            document.addEventListener('DOMContentLoaded', function() {
+                const deleteButton = document.getElementById('deleteButton');
+                if (deleteButton) {
+                    deleteButton.addEventListener('click', function() {
+                        const filename = '<%= filename %>';
+                        fetch(`/api/delete/${filename}`, {
+                            method: 'DELETE',
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            alert(data.message);
+                            window.location.href = '/dashboard';
+                        })
+                        .catch(error => console.error('Error Deleting File:', error));
+                    });
+                }
+            });
+        </script>
+    </div>
+</body>
+
+</html>

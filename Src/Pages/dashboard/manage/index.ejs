@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <style>
+    </style>
+    <title>OpenX Dashboard</title>
+</head>
+
+<body class="font-sans bg-[#0C101C] text-gray-300 flex flex-col h-screen">
+    <%- include('../Parts/Header/index.ejs') %>
+
+    <div class="flex-1 flex overflow-hidden">
+        <%- include('../Parts/Sidebar/index.ejs') %>
+
+        <main class="flex-1 p-8 bg-[#05070F] overflow-y-auto rounded-tl-lg">
+            <div class="bg-[#0C101C] rounded p-4 mb-6 mr-6 flex-1">
+                <div class="mb-6">
+                    <label for="apiToken" class="block text-white text-lg mb-2">Api Token</label>
+                    <div class="flex gap-2 mt-2">
+                        <button onclick="createApiToken()" class="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-3 rounded-xl transition duration-300 ease-in-out transform hover:scale-105 mt-2">Generate</button>
+                        <a href="/dashboard/manage/api"><button class="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-3 rounded-xl transition duration-300 ease-in-out transform hover:scale-105 mt-2">View</button></a>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <label for="username" class="block text-white text-lg mb-2">Username</label>
+                    <div class="relative">
+                        <input type="text" id="username" class="w-full p-2 bg-[#171B27] text-gray-300 border-[#171F35] rounded" />
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <label for="passwordInput" class="block text-white text-lg mb-2">Password</label>
+                    <p class="text-gray-400">Leave blank to keep your old password</p>
+                    <input type="password" id="passwordInput" class="w-full p-2 bg-[#171B27] text-gray-300 rounded" />
+                </div>
+
+                <!-- Embed options card -->
+                <div class="bg-[#171B27] rounded p-4 mb-8 flex">
+                    <div class="grid grid-cols-2 gap-4 w-1/2 pr-8">
+                        <div>
+                            <label for="embedTitle" class="block text-white mb-1">Title</label>
+                            <input type="text" id="embedTitle" class="w-full p-2 bg-[#171B27] text-gray-300 border-[#171F35] rounded" />
+                        </div>
+                        <div>
+                            <label for="embedColor" class="block text-white mb-1">Color</label>
+                            <div class="flex items-center">
+                                <input type="color" id="embedColor" class="w-10 h-10 p-2 bg-[#171B27] text-gray-300 border-[#171F35] rounded-l-md" onclick="toggleActiveBorder()">
+                                <input type="text" id="embedColorText" class="w-full p-2 bg-[#171B27] text-gray-300 border-[#171F35] rounded-r-md" readonly>
+                            </div>
+                        </div>        
+                        <div>
+                            <label for="embedDescription" class="block text-white mb-1">Description</label>
+                            <textarea id="embedDescription" class="w-full p-2 bg-[#171B27] text-gray-300 border-[#171F35] rounded"></textarea>
+                        </div>
+                        <div>
+                            <label for="embedFooter" class="block text-white mb-1">Footer</label>
+                            <input type="text" id="embedFooter" class="w-full p-2 bg-[#171B27] text-gray-300 border-[#171F35] rounded" />
+                        </div>
+                    </div>
+                
+                    <div class="flex items-end justify-end mb-4 gap-2">
+                        <button onclick="saveEmbed()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out transform hover:scale-105">Save</button>
+                        <button onclick="deleteEmbed()" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out transform hover:scale-105">Delete</button>
+                    </div>
+                </div>
+            </main>
+
+        <div id="notification"></div>
+
+        
+        <script>
+            function toggleVisibility(inputId) {
+                const input = document.getElementById(inputId);
+                input.type = input.type === 'password' ? 'text' : 'password';
+            }
+        
+            async function createApiToken() {
+                try {
+                    const response = await fetch('/api/token/create', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    });
+        
+                    const data = await response.json();
+        
+                    if (data.success) {
+                        document.getElementById('apiToken').value = data.token;
+                    } else {
+                        console.error('Error Creating API Token:', data.message);
+                    }
+                } catch (error) {
+                    console.error('Error Creating API Token:', error);
+                }
+            }
+
+            async function getUserId() {
+                try {
+                    const response = await fetch('/api/users');
+                    const data = await response.json();
+                    if (data.success) {
+                        return data.user.userid;
+                    } else {
+                        console.error('Error fetching user ID:', data.message);
+                        return null;
+                    }
+                } catch (error) {
+                    console.error('Error fetching user ID:', error);
+                    return null;
+                }
+            }
+
+            document.getElementById('embedColor').value = '#000000';
+            updateColorText();
+
+            function updateColorText() {
+                const colorInput = document.getElementById('embedColor');
+                const colorText = document.getElementById('embedColorText');
+                colorText.value = colorInput.value;
+            }
+
+            function toggleActiveBorder() {
+                const colorInput = document.getElementById('embedColor');
+                colorInput.classList.toggle('active-border');
+            }
+        
+            function updateEmbedPreview() {
+                const embedTitle = document.getElementById('embedTitle').value;
+                const embedDescription = document.getElementById('embedDescription').value;
+                const embedFooter = document.getElementById('embedFooter').value;
+                const embedColor = document.getElementById('embedColor').value;
+        
+                document.getElementById('previewTitle').textContent = embedTitle;
+                document.getElementById('previewDescription').textContent = embedDescription;
+                document.getElementById('previewFooter').textContent = embedFooter;
+        
+                document.getElementById('embedPreviewContainer').style.backgroundColor = embedColor;
+            }
+
+            function showNotification(message, type = 'success') {
+                const notificationElement = document.getElementById('notification');
+                notificationElement.textContent = message;
+                notificationElement.style.backgroundColor = type === 'success' ? '#4CAF50' : '#FF5252';
+                notificationElement.style.display = 'block';
+
+                // Hide the notification after 3 seconds
+                setTimeout(() => {
+                    notificationElement.style.display = 'none';
+                }, 3000);
+            }
+
+            async function saveEmbed() {
+                const userid = `<%= user.userid %>`;
+                if (!userid) {
+                    console.error('User ID not available. Unable to save embed settings.'); // errors at this bruh
+                    return;
+                } 
+
+                const title = document.getElementById('embedTitle').value;
+                const color = document.getElementById('embedColor').value;
+                const description = document.getElementById('embedDescription').value;
+                const footer = document.getElementById('embedFooter').value;
+
+                try {
+                    const response = await fetch('/api/embed/edit', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            userid, 
+                            title,
+                            color,
+                            description,
+                            footer
+                        }),
+                    });
+
+                    if (response.ok) {
+                        console.log('Embed settings saved successfully!');
+                        showNotification('Embed settings saved successfully!');
+                    } else {
+                        console.error('Error saving embed settings:', response.statusText);
+                        showNotification(`Error saving embed settings: ${response.statusText}`, 'error');
+                    }
+                } catch (error) {
+                    console.error('Error saving embed settings:', error);
+                    showNotification(`Error saving embed settings: ${error}`, 'error');
+                }
+            }
+        </script>
+    </div>
+</body>
+
+</html>
