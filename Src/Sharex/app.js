@@ -7,9 +7,9 @@ const path = require('path');
 const { getFileType } = require('../Utils/fileutil.js');
 const config = require('../../config.json');
 const session = require('express-session');
-const Token = require("../Scripts/Token.js") 
-const Upload = require("../Scripts/Upload.js")
-const Embed = require("../Scripts/Embed.js")
+const Token = require("../Scripts/Token.js");
+const Upload = require("../Scripts/Upload.js");
+const Embed = require("../Scripts/Embed.js");
 
 router.use(express.json());
 router.use(bodyParser.json());
@@ -22,7 +22,7 @@ router.use(session({
 
 
 // Loading All Routers
-const Router = require('./Routers')
+const Router = require('./Routers');
 router.use('/', Router);
 
 
@@ -64,7 +64,7 @@ router.use(async (req, res, next) => {
   const imageInfo = await getImageInfo();
   req.imageInfo = imageInfo;
   next();
-}); 
+});
 
 const views = new Map();
 router.use((req, res, next) => {
@@ -87,7 +87,6 @@ router.get('/api/viewcount/:filename', (req, res) => {
 
 
 
-
 // LogoutApi Router
 router.get('/logout', (req, res) => {
   req.session.destroy(err => {
@@ -104,33 +103,34 @@ router.get('/logout', (req, res) => {
 
 
 
-
 // Pages
 router.get('/', (req, res) => {
   const loggedIn = req.session.user && req.session.user.authenticated;
-  res.render('index.ejs', {loggedIn});
+  res.render('index.ejs', { loggedIn });
 });
 
 router.get('/login', (req, res) => {
-  res.render('login.ejs', {config: config});
+  res.render('login.ejs');
 });
-
 
 router.get('/dashboard', (req, res) => {
-  res.render('dashboard/index.ejs', {user: req.session.user}); 
-}); 
+  res.render('dashboard/index.ejs', { user: req.session.user });
+});
 
 router.get('/dashboard/files', (req, res) => {
-  res.render('dashboard/files.ejs', {user: req.session.user});
+  res.render('dashboard/files.ejs', { user: req.session.user });
 });
-//user.username well i mean just look at this endpoint, this is what we need, this works just fine
+
 router.get('/dashboard/manage', async (req, res) => {
-  res.render('dashboard/manage/index.ejs', {user: req.session.user, token: await Token.getTokens() });
+  res.render('dashboard/manage/index.ejs', { user: req.session.user, token: await Token.getTokens() });
 });
 
 router.get('/dashboard/users', async (req, res) => {
+  if (!req.session.user || !req.session.user.isAdmin) {
+    return res.redirect('/unauthorized');
+  }
 
-  res.render('dashboard/users.ejs', {username: req.session.user.username, token: await Token.getTokens() });
+  res.render('dashboard/users.ejs', { username: req.session.user.username, token: await Token.getTokens() });
 });
 
 router.get('/dashboard/manage/api', async (req, res) => {
@@ -143,16 +143,15 @@ router.get('/dashboard/manage/api', async (req, res) => {
   }
 });
 
+router.get('/unauthorized', (req, res) => {
+  res.render('unauthorized.ejs');
+});
 
 router.get('/i/:filename', async (req, res) => {
   let uploadInfo = await Upload.getUpload(path.basename(req.params.filename))
   if(!uploadInfo) {
     return res.sendStatus(404);
   }
-
-  // const uploadInfo = req.imageInfo.find(
-  //   (image) => image.filename === req.params.filename
-  // );
   let embedInfo = await Embed.getEmbedSettings(uploadInfo.user);
 
   const loggedIn = req.session.user && req.session.user.authenticated;
@@ -216,6 +215,7 @@ router.delete('/api/delete/:filename', async (req, res) => {
     res.status(500).json({ success: false, message: 'Internal Server Error' });
   }
 });
+
 
 // Exporting Routers
 module.exports = router;

@@ -5,8 +5,8 @@ const Token = require("../../../../Scripts/Token")
 router.post("/create", async (req,res) => {
     let token = await Token.createToken(req.session.isAdmin ? "Admin" : "User", req.session.user.userid);
     res.status(200).json({success: true, token})
-}) // nothing i didnt even touch token
-// error either i did ;-;
+}) 
+ 
 router.get("/tokens", async (req,res) => {
     let tokens = req.session.user.isAdmin ? await Token.getTokens() : await Token.getTokenByUserId(req.session.user.userid);
     res.status(200).json({tokens})

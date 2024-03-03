@@ -18,113 +18,10 @@
 </head>
 
 <body class="font-sans bg-[#0C101C] text-gray-300 flex flex-col h-screen">
-    <header class="bg-[#0C101C] p-4 border-b border-[#171F35]">
-        <div class="container mx-auto flex items-center justify-between">
-            <a href="/">
-                <h1 class="text-3xl font-extrabold text-white">OpenX</h1>
-            </a>
-            <div class="relative" id="userDropdownContainer">
-                <span class="text-xl text-white font-bold cursor-pointer transition-all duration-300 ease-in-out transform hover:scale-110" id="userDropdown"> <%= user.username %> </span>
-                <div class="absolute hidden mt-2 w-36 right-0 bg-[#181C28] text-white border-[#171F35] border rounded-md py-2" id="userDropdownBox">
-                    <div class="border-b border-[#171F35] text-center text-gray-500 mb-2">
-                        <p><%= user.username %></p><!--it was working here before u made changes, since i was working on embed edit-->
-                    </div>
-                    <a href="/dashboard/manage" class="block px-4 py-2 text-white hover:bg-[#171F35] hover:text-white border-b border-[#171F35] transition duration-300 ease-in-out">
-                        <span class="mr-2">&#x1F4BB;</span> Manage
-                    </a>
-                    <a href="/logout" class="block px-4 py-2 text-white hover:bg-[#171F35] hover:text-white transition duration-300 ease-in-out">
-                        <span class="mr-2">&#x1F6AA;</span> Logout
-                    </a>
-                </div>
-            </div>
-        </div>
-    </header>
-    
-    <script>
-        var dropdownContainer = document.getElementById('userDropdownContainer');
-        var dropdown = document.getElementById('userDropdownBox');
-    
-        dropdownContainer.addEventListener('click', function (event) {
-            dropdown.classList.toggle('hidden');
-            event.stopPropagation();
-        });
-    
-        document.addEventListener('click', function () {
-            dropdown.classList.add('hidden');
-        });
-    
-        dropdown.addEventListener('click', function (event) {
-            event.stopPropagation();
-        });
-    </script> 
+    <%- include('./Parts/Header/index.ejs') %>
 
     <div class="flex-1 flex overflow-hidden">
-        
-<body class="font-sans bg-[#0C101C] text-gray-300 flex flex-col h-screen">
-    <aside class="w-1/6 h-screen overflow-hidden bg-[#0C101C] border-r border-[#171F35] md:border-r-2">
-        <nav class="p-4">
-            <ul class="space-y-2">
-                <a href="/dashboard" class="text-white">
-                    <li class="flex items-center p-3 md:p-2 hover:bg-gray-900 hover:text-gray-300 transition duration-300 rounded-md">
-                        <i class="fas fa-home text-xl md:text-lg mr-2"></i>
-                        <span class="hidden md:inline-block ml-2 md:text-lg">Home</span>
-                    </li>
-                </a>
-                <a href="/dashboard/files" class="text-white">
-                    <li class="flex items-center p-3 md:p-2 hover:bg-gray-900 hover:text-gray-300 transition duration-300 rounded-md gap-1">
-                        <i class="fas fa-file-alt text-xl md:text-lg mr-2"></i>
-                        <span class="hidden md:inline-block ml-2 md:text-lg">Files</span>
-                    </li>
-                </a>
-                    <li class="relative group">
-                        <a href="#" class="text-white group flex items-center p-3 md:p-2 hover:bg-gray-900 hover:text-gray-300 transition duration-300 rounded-md">
-                            <i class="fas fa-user-cog text-xl md:text-lg mr-2"></i>
-                            <span class="hidden md:inline-block ml-2 md:text-lg">Admin</span>
-                            <i class="fas fa-chevron-down ml-2"></i>
-                        </a>
-                        <ul class="absolute hidden mt-2 space-y-2 rounded-md shadow-md w-full" id="adminDropdown">
-                            <a href="/dashboard/users" class="p-2 text-white flex items-center hover:bg-gray-900 transition duration-300">
-                                <i class="fas fa-users text-xl md:text-lg mr-2"></i>
-                                Users
-                            </a>
-                        </ul>
-                    </li>
-            </ul>
-        </nav>
-    </aside>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', async function () {
-            const response = await fetch('/api/users');
-            const users = await response.json();
-            const isAdmin = users.some(user => user.isAdmin);
-
-            if (isAdmin) {
-                const adminLink = document.querySelector('.group');
-                const adminDropdown = document.getElementById('adminDropdown');
-
-                adminLink.classList.remove('hidden');
-
-                adminLink.addEventListener('click', function (event) {
-                    event.stopPropagation();
-
-                    if (adminDropdown.classList.contains('hidden')) {
-                        adminDropdown.classList.remove('hidden');
-                        document.addEventListener('click', closeDropdown);
-                    } else {
-                        closeDropdown();
-                    }
-                });
-
-                function closeDropdown() {
-                    adminDropdown.classList.add('hidden');
-                    document.removeEventListener('click', closeDropdown);
-                }
-            }
-        });
-    </script>
-
-
+        <%- include('./Parts/Sidebar/index.ejs') %>
 
         <main class="flex-1 p-8 bg-[#05070F] overflow-y-auto max-h-screen" data-simplebar data-simplebar-auto-hide="false">
             <div class="bg-[#171B27] p-8 rounded-md shadow-md space-y-6 border border-[#171F35]">
@@ -182,7 +79,6 @@
                     .catch(error => console.error('Error fetching media files:', error));
             </script>
             <script src="https://unpkg.com/simplebar@5.3.0/dist/simplebar.min.js" integrity="sha384-Htn6P9GQ9tTTOVS17d38zP9MFCbBnH94I7zDn5wS+cuJADP7EhX2PtpQg9xDjzn+" crossorigin="anonymous"></script>
-
         </main>
     </div>
 </body>

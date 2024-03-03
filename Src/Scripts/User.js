@@ -1,4 +1,4 @@
-    // Importing
+// Importing
 const mongoose = require("mongoose")
 const argon2 = require("argon2")
 const userSchema = require("../Schema/User");
@@ -12,7 +12,7 @@ module.exports = {
      * @returns {Promise<Array<Object>>} Returns all the users
      */
     async getAllUsers() {
-        return (await userModel.find({})).map(({userid, username, isAdmin}) => ({userid, username, isAdmin}));
+        return (await userModel.find({})).map(({ userid, username, isAdmin }) => ({ userid, username, isAdmin }));
     },
     /**
      * Create the user and store to db
@@ -51,13 +51,27 @@ module.exports = {
     },
 
     /**
+     * Update the username of a user;
+     * @param {String} oldUsername The old username of the user
+     * @param {String} newUsername The new username of the user
+     * @throws {Error} If the username is already taken
+     * @returns {Promise<void>} A promise for the username update 
+     */
+    async updateUsername(oldUsername, newUsername) {
+        let res = await userModel.findOneAndUpdate({username: oldUsername}, {username: newUsername}, {new: true})
+        if(res.username !== newUsername) {
+            throw new Error("The username is already taken!");
+        }
+    }, 
+ 
+    /**
      * Update a user's password. 
-     * @param {String} username The username of the user
+     * @param {Number} userid The id of the user
      * @param {String} password The password to update to. This function will hash the password
      */
-    async updateUserPassword(username, password) {
+    async updateUserPassword(userid, password) {
         let hashedPassword = await argon2.hash(password);
-        await userModel.findOneAndUpdate({username}, {password: hashedPassword})
+        await userModel.findOneAndUpdate({userid}, {password: hashedPassword})
     },
 
     /**

@@ -36,7 +36,7 @@ router.get('/api/media/:userid', async (req, res) => {
         res.json({mediaFiles});
       }
     }
-    //it will be up to u entirely, i aint gonna bail u out
+     
   } catch (error) {
     res.status(500).json({ error: 'Internal Server Error' });
   } 

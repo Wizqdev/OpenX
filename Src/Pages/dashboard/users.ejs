@@ -1,4 +1,7 @@
-  <head>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -6,95 +9,95 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
   </head>
 
-  <body class="font-sans bg-[#0C101C] text-gray-300 flex flex-col h-screen">
-    <%- include('./Parts/Header/index.ejs') %>
+<body class="font-sans bg-[#0C101C] text-gray-300 flex flex-col h-screen">
+  <%- include('./Parts/Header/index.ejs') %>
 
-    <div class="flex-1 flex overflow-hidden">
-      <%- include('./Parts/Sidebar/index.ejs') %>
+  <div class="flex-1 flex overflow-hidden">
+    <%- include('./Parts/Sidebar/index.ejs') %>
 
-      <main class="flex-1 p-4 md:p-8 bg-[#0C101C] overflow-y-auto rounded-tl-lg">
-        <div class="bg-[#0C101C] p-4 md:p-8 rounded-md shadow-md space-y-4 border border-[#41566E]">
-          <div class="flex items-center justify-between">
-            <h2 class="text-xl md:text-3xl font-bold text-white mb-4">Users</h2>
-            <div class="flex space-x-4">
-              <button id="openCreateModalBtn"
-                class="text-sm bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded-lg transition duration-300 ease-in-out transform hover:scale-105">Create</button>
-            </div>
-          </div>
-  
-          <table class="w-full bg-[#0C101C] text-white border border-[#41566E]">
-            <thead>
-              <tr>
-                <th class="py-2 px-4 text-center">ID</th>
-                <th class="py-2 px-4 text-center">Username</th>
-                <th class="py-2 px-4 text-center">Admin</th>
-                <th class="py-2 px-4 text-center">Actions</th>
-              </tr>
-            </thead>
-            <tbody id="userTableBody" class="w-full bg-[#0C101C] text-white border border-[#41566E]">
-              <!-- User rows will be dynamically added here -->
-            </tbody>
-          </table>
-  
-          <!-- Create Modal -->
-          <div id="CreateModal" class="modal fixed inset-0 hidden bg-gray-600 bg-opacity-50 flex items-center justify-center">
-            <div class="modal-content bg-[#0C101C] p-6 rounded-lg shadow-lg">
-              <h1 class="text-2xl font-bold mb-4 text-white">Create User</h1>
-  
-              <div class="mb-4">
-                <label for="username" class="text-white block">Username:</label>
-                <input type="text" id="username" name="username"
-                  class="bg-gray-800 text-white px-4 py-2 rounded focus:outline-none focus:shadow-outline-blue">
-              </div>
-  
-              <div class="mb-4">
-                <label for="password" class="text-white block">Password:</label>
-                <input type="password" id="password" name="password"
-                  class="bg-gray-800 text-white px-4 py-2 rounded focus:outline-none focus:shadow-outline-blue">
-              </div>
-  
-              <div class="mb-4">
-                <input type="checkbox" id="isAdmin" name="isAdmin" class="mr-2">
-                <label for="isAdmin" class="text-white">Admin</label>
-              </div>
-  
-              <button id="createUserBtn"
-                class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline-green active:bg-green-800">
-                Create
-              </button>
-            </div>
-          </div>
-  
-          <!-- Edit Modal -->
-          <div id="EditModal" class="modal fixed inset-0 hidden bg-gray-600 bg-opacity-50 flex items-center justify-center">
-            <div class="modal-content bg-[#0C101C] p-6 rounded-lg shadow-lg">
-              <h1 class="text-2xl font-bold mb-4 text-white">Edit User</h1>
-  
-              <div class="mb-4">
-                <label for="editUsername" class="text-white block">New Username:</label>
-                <input type="text" id="editUsername" name="editUsername"
-                  class="bg-gray-800 text-white px-4 py-2 rounded focus:outline-none focus:shadow-outline-blue">
-              </div>
-  
-              <div class="mb-4">
-                <label for="editPassword" class="text-white block">New Password:</label>
-                <input type="password" id="editPassword" name="editPassword"
-                  class="bg-gray-800 text-white px-4 py-2 rounded focus:outline-none focus:shadow-outline-blue">
-              </div>
-  
-              <div class="mb-4">
-                <input type="checkbox" id="editIsAdmin" name="editIsAdmin" class="mr-2">
-                <label for="editIsAdmin" class="text-white">Admin</label>
-              </div>
-  
-              <button id="editUserBtn"
-                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline-blue active:bg-blue-800">
-                Save Changes
-              </button>
-            </div>
+    <main class="flex-1 p-4 md:p-8 bg-[#0C101C] overflow-y-auto rounded-tl-lg">
+      <div class="bg-[#0C101C] p-4 md:p-8 rounded-md shadow-md space-y-4 border border-[#41566E]">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl md:text-3xl font-bold text-white mb-4">Users</h2>
+          <div class="flex space-x-4">
+            <button id="openCreateModalBtn"
+              class="text-sm bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded-lg transition duration-300 ease-in-out transform hover:scale-105">Create</button>
           </div>
         </div>
-      </main>
+
+        <table class="w-full bg-[#0C101C] text-white border border-[#41566E]">
+          <thead>
+            <tr>
+              <th class="py-2 px-4 text-center">ID</th>
+              <th class="py-2 px-4 text-center">Username</th>
+              <th class="py-2 px-4 text-center">Admin</th>
+              <th class="py-2 px-4 text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="userTableBody" class="w-full bg-[#0C101C] text-white border border-[#41566E]">
+            <!-- User rows will be dynamically added here -->
+          </tbody>
+        </table>
+
+        <!-- Create Modal -->
+        <div id="CreateModal" class="modal fixed inset-0 hidden bg-gray-600 bg-opacity-50 flex items-center justify-center">
+          <div class="modal-content bg-[#0C101C] p-6 rounded-lg shadow-lg">
+            <h1 class="text-2xl font-bold mb-4 text-white">Create User</h1>
+
+            <div class="mb-4">
+              <label for="username" class="text-white block">Username:</label>
+              <input type="text" id="username" name="username"
+                class="bg-gray-800 text-white px-4 py-2 rounded focus:outline-none focus:shadow-outline-blue">
+            </div>
+
+            <div class="mb-4">
+              <label for="password" class="text-white block">Password:</label>
+              <input type="password" id="password" name="password"
+                class="bg-gray-800 text-white px-4 py-2 rounded focus:outline-none focus:shadow-outline-blue">
+            </div>
+
+            <div class="mb-4">
+              <input type="checkbox" id="isAdmin" name="isAdmin" class="mr-2">
+              <label for="isAdmin" class="text-white">Admin</label>
+            </div>
+
+            <button id="createUserBtn"
+              class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline-green active:bg-green-800">
+              Create
+            </button>
+          </div>
+        </div>
+
+        <!-- Edit Modal -->
+        <div id="EditModal" class="modal fixed inset-0 hidden bg-gray-600 bg-opacity-50 flex items-center justify-center">
+          <div class="modal-content bg-[#0C101C] p-6 rounded-lg shadow-lg">
+            <h1 class="text-2xl font-bold mb-4 text-white">Edit User</h1>
+
+            <div class="mb-4">
+              <label for="editUsername" class="text-white block">New Username:</label>
+              <input type="text" id="editUsername" name="editUsername"
+                class="bg-gray-800 text-white px-4 py-2 rounded focus:outline-none focus:shadow-outline-blue">
+            </div>
+
+            <div class="mb-4">
+              <label for="editPassword" class="text-white block">New Password:</label>
+              <input type="password" id="editPassword" name="editPassword"
+                class="bg-gray-800 text-white px-4 py-2 rounded focus:outline-none focus:shadow-outline-blue">
+            </div>
+
+            <div class="mb-4">
+              <input type="checkbox" id="editIsAdmin" name="editIsAdmin" class="mr-2">
+              <label for="editIsAdmin" class="text-white">Admin</label>
+            </div>
+
+            <button id="editUserBtn"
+              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline-blue active:bg-blue-800">
+              Save Changes
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
 
         <script>
           function createUser(username, password, isAdmin) {

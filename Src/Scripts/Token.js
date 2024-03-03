@@ -5,14 +5,20 @@ const tokenModel = mongoose.model("tokens", tokenSchema)
 tokenModel.init();
 module.exports = {
     /**
-     * Create the token and store to db
+     * Create the token and store it in the database
      * @param {String} tokenType The token type
-     * @returns {Promise<String>} A promise for the token creation that resolved to the token
+     * @param {String} userid The user ID associated with the token
+     * @returns {Promise<String>} A promise for the token creation that resolves to the token
      */
     async createToken(tokenType, userid) {
-        let token = stringUtil.generateRandomString(32); //the TODO below is for later, much much later lol
-        await tokenModel.create({token, permissions: [tokenType], user: userid}) // TODO: write a better permissions system that allows for more granular control over what a token can and can't do
-        return token
+        try {
+            let token = stringUtil.generateRandomString(32);
+            await tokenModel.create({ token, permissions: [tokenType], user: userid });
+            return token;
+        } catch (error) {
+            console.error('Error creating token:', error);
+            throw error;
+        }
     },
 
     /**

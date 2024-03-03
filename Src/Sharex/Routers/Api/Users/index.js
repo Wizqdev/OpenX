@@ -51,16 +51,33 @@ router.get("/config", async (req, res) => {
     return res.json(config)
 })
 
-router.put("/edit/:username", async (req, res) => {
-    const { username } = req.params;
+router.post("/edit/:username", async (req, res) => {
+    const { username: newUsername } = req.body;
 
     try {
-        //if(!req.session.user.isAdmin) return res.status(403).json({error: "You do not have the permission to edit this user!"})
-        //await User.updateUser(username, password, isAdmin); Not implemented yet!
-        //res.json({ message: "User Updated Successfully" });
-        res.status(418).json({error: "Not implemented yet!"})
+        if(req.session.user.username !== req.params.username && !req.session.user.isAdmin) return res.status(403).json({error: "You do not have the permission to edit this user!"})
+        await User.updateUsername(req.params.username, newUsername)
+            .catch((_err) => {res.status(400).json({error: "Username is taken. Please use another username!"})})
+            .then(() => {return res.json({ message: "User Updated Successfully" })});
     } catch (error) {
-        console.error("Error updating user:", error);
+        console.error("Error updating user username:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
+router.put("/edit/password", async (req, res) => {
+    const { oldPassword, newPassword, userid } = req.body;
+    if(!oldPassword || !newPassword) return res.status(400).json({error: "Missing fields"});
+    if(oldPassword === newPassword) return res.status(400).json({error: "New password cannot be the same as the old password!"});
+    if(!(await User.verifyPassword(oldPassword))) return res.status(400).json({error: "Old password is incorrect!"});
+    if(newPassword.length < 8) return res.status(400).json({error: "Password must be at least 8 characters long"});
+    try {
+        if(req.session.user.id !== userid && !req.session.user.isAdmin) return res.status(403).json({error: "You do not have the permission to edit this user!"})
+        await User.updateUserPassword(userid, newPassword)
+            .catch((_err) => {res.status(400).json({error: "Password setting failed!"})})
+            .then(() => {return res.json({ message: "Password Updated Successfully" })});
+    } catch (error) {
+        console.error("Error updating user password:", error);
         res.status(500).json({ error: "Internal Server Error" });
     }
 });

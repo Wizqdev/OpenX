@@ -1,65 +1,38 @@
-
-<body class="font-sans bg-[#0C101C] text-gray-300 flex flex-col h-screen">
-    <aside class="w-1/6 h-screen overflow-hidden bg-[#0C101C] border-r border-[#171F35] md:border-r-2">
-        <nav class="p-4">
-            <ul class="space-y-2">
-                <a href="/dashboard" class="text-white">
-                    <li class="flex items-center p-3 md:p-2 hover:bg-gray-900 hover:text-gray-300 transition duration-300 rounded-md">
-                        <i class="fas fa-home text-xl md:text-lg mr-2"></i>
-                        <span class="hidden md:inline-block ml-2 md:text-lg">Home</span>
-                    </li>
-                </a>
-                <a href="/dashboard/files" class="text-white">
-                    <li class="flex items-center p-3 md:p-2 hover:bg-gray-900 hover:text-gray-300 transition duration-300 rounded-md gap-1">
-                        <i class="fas fa-file-alt text-xl md:text-lg mr-2"></i>
-                        <span class="hidden md:inline-block ml-2 md:text-lg">Files</span>
-                    </li>
-                </a>
-                    <li class="relative group">
-                        <a href="#" class="text-white group flex items-center p-3 md:p-2 hover:bg-gray-900 hover:text-gray-300 transition duration-300 rounded-md">
-                            <i class="fas fa-user-cog text-xl md:text-lg mr-2"></i>
-                            <span class="hidden md:inline-block ml-2 md:text-lg">Admin</span>
-                            <i class="fas fa-chevron-down ml-2"></i>
-                        </a>
-                        <ul class="absolute hidden mt-2 space-y-2 rounded-md shadow-md w-full" id="adminDropdown">
-                            <a href="/dashboard/users" class="p-2 text-white flex items-center hover:bg-gray-900 transition duration-300">
-                                <i class="fas fa-users text-xl md:text-lg mr-2"></i>
-                                Users
-                            </a>
-                        </ul>
-                    </li>
+<body class="font-sans bg-[#0C101C] text-gray-300 flex flex-col min-h-screen">
+    <aside class="w-1/6 h-screen overflow-hidden bg-[#0C101C] border-r border-[#171F35] md:w-1/5 lg:w-1/6 md:border-r-2">
+        <nav class="p-2">
+            <ul class="">
+                <li id="homeLink" class="sidebar-item">
+                    <a href="/dashboard" class="sidebar-link flex items-center p-2">
+                        <i class="fas fa-home text-lg md:text-sm mr-2"></i>
+                        <span class="hidden md:inline-block md:text-lg">Home</span>
+                    </a>
+                </li>
+                <li id="filesLink" class="sidebar-item">
+                    <a href="/dashboard/files" class="sidebar-link flex items-center p-2">
+                        <i class="fas fa-file-alt text-lg md:text-sm mr-2"></i>
+                        <span class="hidden md:inline-block md:text-lg">Files</span>
+                    </a>
+                </li>
             </ul>
         </nav>
     </aside>
 
     <script>
         document.addEventListener('DOMContentLoaded', async function () {
-            const response = await fetch('/api/users');
-            const users = await response.json();
-            const isAdmin = users.some(user => user.isAdmin);
+            try {
+                const response = await fetch('/api/users');
+                const users = await response.json();
+                const isAdmin = users.some(user => user.isAdmin);
 
-            if (isAdmin) {
-                const adminLink = document.querySelector('.group');
-                const adminDropdown = document.getElementById('adminDropdown');
+                const adminLink = document.getElementById('adminLink');
 
-                adminLink.classList.remove('hidden');
-
-                adminLink.addEventListener('click', function (event) {
-                    event.stopPropagation();
-
-                    if (adminDropdown.classList.contains('hidden')) {
-                        adminDropdown.classList.remove('hidden');
-                        document.addEventListener('click', closeDropdown);
-                    } else {
-                        closeDropdown();
-                    }
-                });
-
-                function closeDropdown() {
-                    adminDropdown.classList.add('hidden');
-                    document.removeEventListener('click', closeDropdown);
+                if (isAdmin) {
+                    adminLink.classList.remove('hidden');
                 }
+            } catch (error) {
+                console.error('Error Fetching User Information:', error);
             }
         });
     </script>
-
+</body>

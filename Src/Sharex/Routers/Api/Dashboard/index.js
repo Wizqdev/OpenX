@@ -12,7 +12,8 @@ router.use((req, res, next) => {
         next();
     }
 }); 
-//the router? all i see is index.js under it
+
+
 router.get('/dashboard', (req, res) => { 
     const username = req.session.user ? req.session.user.username : null;
     res.render('dashboard', { username });

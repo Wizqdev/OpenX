@@ -47,7 +47,7 @@ const upload = multer({
 router.use('/uploads', express.static('uploads'));
 
 router.post('/api/upload', (req, res) => {
-  // if no auth token, improper auth token, or invalid auth token, reject
+   
   if(!req.headers.authorization || !req.headers.authorization.startsWith("Bearer ") || !Token.isTokenValid(req.headers.authorization.replace("Bearer ", ""), "User")) {
     return res.status(403).json({success: false, message: "Invalid auth token! Re-download your config from the dashboard!"})
   }

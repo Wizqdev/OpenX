@@ -40,19 +40,15 @@ app.use(mainRouter)
 mongoose.connect(config.Database.MongoDB).then(async () => {
     console.log("Successfully Connected To MongoDB!");
     await Misc.initWithDefaults()
-    if(!(await User.userExists("administrator"))) {
-        let randomPass = stringUtil.generateRandomPassword(32);
-        await User.createUser("administrator", randomPass, true);
-    if(!(await User.userExists("administrator"))) { 
+    if((await Misc.get("userIdPointer")) === 1) { 
         let randomPass = stringUtil.generateRandomPassword(32);
         await User.createUser("administrator", randomPass);
         console.log("==============")
-        console.log("Admin User Not Found! Generating A New Admin User!");
+        console.log("No users found! Generating A New Admin User!");
         console.log(`Username: administrator`);
         console.log(`Password: ${randomPass}`);
         console.log("==============")
     }
-    } 
 })
 
 app.listen(Port, () => {

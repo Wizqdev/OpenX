@@ -1,39 +1,69 @@
-<header class="bg-[#0C101C] p-4 border-b border-[#171F35]">
-    <div class="container mx-auto flex items-center justify-between">
-        <a href="/">
-            <h1 class="text-3xl font-extrabold text-white">OpenX</h1>
-        </a>
-        <div class="relative" id="userDropdownContainer">
-            <span class="text-xl text-white font-bold cursor-pointer transition-all duration-300 ease-in-out transform hover:scale-110" id="userDropdown">  </span>
-            <div class="absolute hidden mt-2 w-36 right-0 bg-[#181C28] text-white border-[#171F35] border rounded-md py-2" id="userDropdownBox">
-                <div class="border-b border-[#171F35] text-center text-gray-500 mb-2">
-                    <p></p>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Add your meta tags, title, and stylesheets here -->
+</head>
+
+<body class="font-sans bg-[#0C101C] text-gray-300 flex flex-col min-h-screen">
+    <header class="bg-[#0C101C] p-4 border-b border-[#171F35]">
+        <div class="container mx-auto flex items-center justify-between">
+            <a href="/">
+                <h1 class="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-extrabold text-white">OpenX</h1>
+            </a>
+            <div class="relative" id="userDropdownContainer">
+                <span class="text-xl md:text-2xl text-white font-bold cursor-pointer transition-all duration-300 ease-in-out transform hover:scale-110" id="userDropdown"></span>
+                <div class="absolute hidden mt-2 w-48 sm:w-56 lg:w-64 right-0 bg-[#181C28] text-white border-[#171F35] border-4 rounded-md py-2" id="userDropdownBox">
+                    <a href="/dashboard/manage" class="block px-4 py-2 text-white border-b border-[#171F35] transition duration-300 ease-in-out flex items-center hover:bg-[#171F35] hover:text-white">
+                        <span class="mr-2"><i class="fas fa-cogs"></i></span> MANAGE
+                    </a>
+                    <a href="/logout" class="block px-4 py-2 text-white transition duration-300 ease-in-out flex items-center hover:bg-[#171F35] hover:text-white">
+                        <span class="mr-2"><i class="fas fa-sign-out-alt"></i></span> LOGOUT
+                    </a>
                 </div>
-                <a href="/dashboard/manage" class="block px-4 py-2 text-white hover:bg-[#171F35] hover:text-white border-b border-[#171F35] transition duration-300 ease-in-out">
-                    <span class="mr-2">&#x1F4BB;</span> Manage
-                </a>
-                <a href="/logout" class="block px-4 py-2 text-white hover:bg-[#171F35] hover:text-white transition duration-300 ease-in-out">
-                    <span class="mr-2">&#x1F6AA;</span> Logout
-                </a>
             </div>
         </div>
-    </div>
-</header>
+    </header>
 
-<script>
-    var dropdownContainer = document.getElementById('userDropdownContainer');
-    var dropdown = document.getElementById('userDropdownBox');
+    <script>
+        var dropdownContainer = document.getElementById('userDropdownContainer');
+        var dropdown = document.getElementById('userDropdownBox');
+        var usernameElement = document.getElementById('username');
 
-    dropdownContainer.addEventListener('click', function (event) {
-        dropdown.classList.toggle('hidden');
-        event.stopPropagation();
-    });
+        dropdownContainer.addEventListener('click', function (event) {
+            dropdown.classList.toggle('hidden');
+            event.stopPropagation();
+        });
 
-    document.addEventListener('click', function () {
-        dropdown.classList.add('hidden');
-    });
+        document.addEventListener('click', function () {
+            dropdown.classList.add('hidden');
+        });
 
-    dropdown.addEventListener('click', function (event) {
-        event.stopPropagation();
-    });
-</script> 
+        dropdown.addEventListener('click', function (event) {
+            event.stopPropagation();
+        });
+
+        document.addEventListener('DOMContentLoaded', async function () {
+            try {
+                const response = await fetch('/api/users');
+                const users = await response.json();
+
+                if (users.length > 0) {
+                    const username = users[0].username;
+
+                    if (username) {
+                        document.getElementById('userDropdown').textContent = username.toUpperCase();
+                        usernameElement.textContent = username.toUpperCase();
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching user information:', error);
+            }
+        });
+    </script>
+
+    <!-- Add your remaining content here -->
+
+</body>
+
+</html>

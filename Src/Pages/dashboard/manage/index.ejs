@@ -8,6 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
     <style>
+        
     </style>
     <title>OpenX Dashboard</title>
 </head>
@@ -29,50 +30,56 @@
                 </div>
 
                 <div class="mb-6">
-                    <label for="username" class="block text-white text-lg mb-2">Username</label>
+                    <label for="newUsername" class="block text-white text-lg mb-2">New Username</label>
                     <div class="relative">
-                        <input type="text" id="username" class="w-full p-2 bg-[#171B27] text-gray-300 border-[#171F35] rounded" />
+                        <input type="text" id="newUsername" class="w-full p-2 bg-[#171B27] text-gray-300 border-[#171F35] rounded" />
                     </div>
                 </div>
-
+                
+                <button onclick="editUsername()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 mb-4">Save Username</button>
+                
                 <div class="mb-6">
-                    <label for="passwordInput" class="block text-white text-lg mb-2">Password</label>
-                    <p class="text-gray-400">Leave blank to keep your old password</p>
-                    <input type="password" id="passwordInput" class="w-full p-2 bg-[#171B27] text-gray-300 rounded" />
+                    <label for="newPassword" class="block text-white text-lg mb-2">New Password</label>
+                    <div class="relative">
+                        <input type="password" id="newPassword" class="w-full p-2 bg-[#171B27] text-gray-300 rounded" />
+                    </div>
                 </div>
+                
+                <button onclick="editPassword()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 mb-4">Save Password</button>
+                
 
                 <!-- Embed options card -->
                 <div class="bg-[#171B27] rounded p-4 mb-8 flex">
                     <div class="grid grid-cols-2 gap-4 w-1/2 pr-8">
                         <div>
                             <label for="embedTitle" class="block text-white mb-1">Title</label>
-                            <input type="text" id="embedTitle" class="w-full p-2 bg-[#171B27] text-gray-300 border-[#171F35] rounded" />
+                            <input type="text" id="embedTitle" class="w-full p-2 bg-[#171B27] text-gray-300 border rounded" />
                         </div>
                         <div>
                             <label for="embedColor" class="block text-white mb-1">Color</label>
                             <div class="flex items-center">
-                                <input type="color" id="embedColor" class="w-10 h-10 p-2 bg-[#171B27] text-gray-300 border-[#171F35] rounded-l-md" onclick="toggleActiveBorder()">
-                                <input type="text" id="embedColorText" class="w-full p-2 bg-[#171B27] text-gray-300 border-[#171F35] rounded-r-md" readonly>
+                                <input type="color" id="embedColor" class="w-10 h-10 p-2 bg-[#171B27] text-gray-300 border rounded-l-md" onclick="toggleActiveBorder()">
+                                <input type="text" id="embedColorText" class="w-full p-2 bg-[#171B27] text-gray-300 border rounded-r-md" readonly>
                             </div>
-                        </div>        
+                        </div>
                         <div>
                             <label for="embedDescription" class="block text-white mb-1">Description</label>
-                            <textarea id="embedDescription" class="w-full p-2 bg-[#171B27] text-gray-300 border-[#171F35] rounded"></textarea>
+                            <textarea id="embedDescription" class="w-full p-2 bg-[#171B27] text-gray-300 border rounded"></textarea>
                         </div>
                         <div>
                             <label for="embedFooter" class="block text-white mb-1">Footer</label>
-                            <input type="text" id="embedFooter" class="w-full p-2 bg-[#171B27] text-gray-300 border-[#171F35] rounded" />
+                            <input type="text" id="embedFooter" class="w-full p-2 bg-[#171B27] text-gray-300 border rounded" />
                         </div>
                     </div>
-                
+
                     <div class="flex items-end justify-end mb-4 gap-2">
                         <button onclick="saveEmbed()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out transform hover:scale-105">Save</button>
                         <button onclick="deleteEmbed()" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out transform hover:scale-105">Delete</button>
                     </div>
                 </div>
-            </main>
-
-        <div id="notification"></div>
+            </div>
+        </main>
+        <div id="notification" class="fixed bottom-4 right-4 w-64 p-4 bg-gray-800 text-white rounded-md hidden"></div>
 
         
         <script>
@@ -81,6 +88,7 @@
                 input.type = input.type === 'password' ? 'text' : 'password';
             }
         
+
             async function createApiToken() {
                 try {
                     const response = await fetch('/api/token/create', {
@@ -89,11 +97,14 @@
                             'Content-Type': 'application/json',
                         },
                     });
-        
+
                     const data = await response.json();
-        
+
                     if (data.success) {
                         document.getElementById('apiToken').value = data.token;
+
+                        console.log('About to show notification');
+                        showNotificationBottomRight('API token generated successfully!', 'success');
                     } else {
                         console.error('Error Creating API Token:', data.message);
                     }
@@ -102,21 +113,65 @@
                 }
             }
 
-            async function getUserId() {
+            async function editUsername() {
+                const oldUsername = document.getElementById('username').value;
+                const newUsername = document.getElementById('newUsername').value;
+
                 try {
-                    const response = await fetch('/api/users');
-                    const data = await response.json();
-                    if (data.success) {
-                        return data.user.userid;
+                    const response = await fetch(`/api/users/edit/${oldUsername}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ username: newUsername }),
+                    });
+
+                    if (response.ok) {
+                        console.log('Username updated successfully!');
+                        showNotificationBottomRight('Username updated successfully!', 'success');
                     } else {
-                        console.error('Error fetching user ID:', data.message);
-                        return null;
+                        console.error('Error updating username:', response.statusText);
+                        showNotificationBottomRight(`Error updating username: ${response.statusText}`, 'error');
                     }
                 } catch (error) {
-                    console.error('Error fetching user ID:', error);
-                    return null;
+                    console.error('Error updating username:', error);
+                    showNotificationBottomRight(`Error updating username: ${error}`, 'error');
                 }
             }
+
+            async function editPassword() {
+                const oldPassword = document.getElementById('passwordInput').value;
+                const newPassword = document.getElementById('newPassword').value;
+                const userId = `<%= user.userid %>`;
+
+                try {
+                    const response = await fetch(`/api/users/edit/password`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            oldPassword,
+                            newPassword,
+                            userid: userId,
+                        }),
+                    });
+
+                    if (response.ok) {
+                        console.log('Password updated successfully!');
+                        showNotificationBottomRight('Password updated successfully!', 'success');
+                    } else {
+                        console.error('Error updating password:', response.statusText);
+                        showNotificationBottomRight(`Error updating password: ${response.statusText}`, 'error');
+                    }
+                } catch (error) {
+                    console.error('Error updating password:', error);
+                    showNotificationBottomRight(`Error updating password: ${error}`, 'error');
+                }
+            }   
+
+            document.getElementById('saveUsernameBtn').addEventListener('click', editUsername);
+            document.getElementById('savePasswordBtn').addEventListener('click', editPassword);
 
             document.getElementById('embedColor').value = '#000000';
             updateColorText();
@@ -145,22 +200,21 @@
                 document.getElementById('embedPreviewContainer').style.backgroundColor = embedColor;
             }
 
-            function showNotification(message, type = 'success') {
-                const notificationElement = document.getElementById('notification');
-                notificationElement.textContent = message;
-                notificationElement.style.backgroundColor = type === 'success' ? '#4CAF50' : '#FF5252';
-                notificationElement.style.display = 'block';
+            function showNotificationBottomRight(message, type = 'success') {
+            const notificationElement = document.getElementById('notification');
+            notificationElement.textContent = message;
+            notificationElement.style.backgroundColor = type === 'success' ? '#4CAF50' : '#FF5252';
+            notificationElement.style.display = 'block';
 
-                // Hide the notification after 3 seconds
-                setTimeout(() => {
-                    notificationElement.style.display = 'none';
-                }, 3000);
-            }
+            setTimeout(() => {
+                notificationElement.style.display = 'none';
+            }, 3000);
+        }
 
             async function saveEmbed() {
                 const userid = `<%= user.userid %>`;
                 if (!userid) {
-                    console.error('User ID not available. Unable to save embed settings.'); // errors at this bruh
+                    console.error('User ID not available. Unable to save embed settings.');
                     return;
                 } 
 
@@ -196,8 +250,9 @@
                     showNotification(`Error saving embed settings: ${error}`, 'error');
                 }
             }
+
+
         </script>
     </div>
 </body>
-
 </html>
